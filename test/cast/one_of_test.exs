@@ -57,17 +57,10 @@ defmodule OpenApiSpex.CastOneOfTest do
       assert error == %OpenApiSpex.Cast.Error{
                format: nil,
                length: 0,
-               meta: %{
-                 failed_schemas: [
-                   "Schema(title: \"Dog\", type: :object)",
-                   "Schema(title: \"Cat\", type: :object)"
-                 ],
-                 message: "no schemas validate",
-                 valid_schemas: []
-               },
-               name: nil,
+               meta: %{},
+               name: "pet_type",
                path: [],
-               reason: :one_of,
+               reason: :invalid_discriminator_value,
                type: nil,
                value: %{"fur" => "grey", "pet_type" => "Wolf"}
              }

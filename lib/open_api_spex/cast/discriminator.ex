@@ -54,8 +54,7 @@ defmodule OpenApiSpex.Cast.Discriminator do
   end
 
   defp cast_composition(composite_ctx, ctx, discriminator_value, mappings) do
-    with {composite_schemas, cast_composition_result} <- cast_composition(composite_ctx),
-         {:ok, _} <- cast_composition_result,
+    with composite_schemas <- get_composite_schemas(composite_ctx),
          %{} = schema <-
            find_discriminator_schema(
              discriminator_value,
@@ -69,17 +68,17 @@ defmodule OpenApiSpex.Cast.Discriminator do
     end
   end
 
-  defp cast_composition(%_{schema: %{anyOf: schemas, discriminator: nil}} = ctx)
+  defp get_composite_schemas(%_{schema: %{anyOf: schemas, discriminator: nil}} = ctx)
        when is_list(schemas),
-       do: {locate_schemas(schemas, ctx.schemas), Cast.cast(ctx)}
+       do: locate_schemas(schemas, ctx.schemas)
 
-  defp cast_composition(%_{schema: %{allOf: schemas, discriminator: nil}} = ctx)
+  defp get_composite_schemas(%_{schema: %{allOf: schemas, discriminator: nil}} = ctx)
        when is_list(schemas),
-       do: {locate_schemas(schemas, ctx.schemas), Cast.cast(ctx)}
+       do: locate_schemas(schemas, ctx.schemas)
 
-  defp cast_composition(%_{schema: %{oneOf: schemas, discriminator: nil}} = ctx)
+  defp get_composite_schemas(%_{schema: %{oneOf: schemas, discriminator: nil}} = ctx)
        when is_list(schemas),
-       do: {locate_schemas(schemas, ctx.schemas), Cast.cast(ctx)}
+       do: locate_schemas(schemas, ctx.schemas)
 
   defp find_discriminator_schema(discriminator, mappings = %{}, schemas) do
     case Map.fetch(mappings, discriminator) do
